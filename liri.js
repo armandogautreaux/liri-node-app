@@ -150,13 +150,16 @@ function runOmdb() {
   request(queryUrl, function(error, response, body) {
     if (!error && response.statusCode === 200) {
       //In some cases, rotten tomatoes is not in the same position or doesn't exist, so we stablish the cases of its uses.
-      var rottenTomatoes = 'Rotten Tomatoes: ';
-      if (JSON.parse(body).Ratings[0].Source === 'Rotten Tomatoes') {
-        rottenTomatoes += JSON.parse(body).Ratings[0].Value;
-      } else {
-        rottenTomatoes += JSON.parse(body).Ratings[1].Value;
+      var rottenTomatoes = '';
+
+      var rottenTomatoesData = JSON.parse(body).Ratings.find(
+        ratt => ratt.Source === 'Rotten Tomatoes'
+      );
+
+      if (rottenTomatoesData) {
+        rottenTomatoes += 'Rotten Tomatoes: ' + rottenTomatoesData.Value + '\n';
       }
-      //After receiveing the data, we store it into a variable
+
       var aboutThisMovie =
         '\n' +
         'Title: ' +
@@ -169,7 +172,6 @@ function runOmdb() {
         JSON.parse(body).imdbRating +
         '\n' +
         rottenTomatoes +
-        '\n' +
         'Country: ' +
         JSON.parse(body).Country +
         '\n' +
